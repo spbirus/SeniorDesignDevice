@@ -155,34 +155,44 @@ void setup(void)
 /**************************************************************************/
 void loop(void)
 {
-  // Check for user input
-  char inputs[BUFSIZE+1];
 
-  if ( getUserInput(inputs, BUFSIZE) )
-  {
-    // Send characters to Bluefruit
-    Serial.print("[Send] ");
-    Serial.println(inputs);
+  int heart_rate = random(50, 100);
+  Serial.print("Heart rate: ");
+  Serial.println(heart_rate);
+  ble.print("AT+BLEUARTTX=");
+  ble.println(heart_rate);
+  ble.println();
 
-    ble.print("AT+BLEUARTTX=");
-    ble.println(inputs);
+  delay(1000);
+  
+//  // Check for user input
+//  char inputs[BUFSIZE+1];
+//
+//  if ( getUserInput(inputs, BUFSIZE) )
+//  {
+//    // Send characters to Bluefruit
+//    Serial.print("[Send] ");
+//    Serial.println(inputs);
+//
+//    ble.print("AT+BLEUARTTX=");
+//    ble.println(inputs);
+//
+//    // check response stastus
+//    if (! ble.waitForOK() ) {
+//      Serial.println(F("Failed to send?"));
+//    }
+//  }
 
-    // check response stastus
-    if (! ble.waitForOK() ) {
-      Serial.println(F("Failed to send?"));
-    }
-  }
-
-  // Check for incoming characters from Bluefruit
-  ble.println("AT+BLEUARTRX");
-  ble.readline();
-  if (strcmp(ble.buffer, "OK") == 0) {
-    // no data
-    return;
-  }
-  // Some data was found, its in the buffer
-  Serial.print(F("[Recv] ")); Serial.println(ble.buffer);
-  ble.waitForOK();
+//  // Check for incoming characters from Bluefruit
+//  ble.println("AT+BLEUARTRX");
+//  ble.readline();
+//  if (strcmp(ble.buffer, "OK") == 0) {
+//    // no data
+//    return;
+//  }
+//  // Some data was found, its in the buffer
+//  Serial.print(F("[Recv] ")); Serial.println(ble.buffer);
+//  ble.waitForOK();
 }
 
 /**************************************************************************/
