@@ -52,7 +52,7 @@ float OutputDelta[OutputNodes];
 float ChangeHiddenWeights[InputNodes+1][HiddenNodes];
 float ChangeOutputWeights[HiddenNodes+1][OutputNodes];
 
-
+//initial 
 const byte HiddenWeights[InputNodes][HiddenNodes] = {
   {0.88031986, 0.31096487, 0.97476878, 0.89757280},
   {0.65730385, 0.58499665, 0.63743563, 0.66019546},
@@ -73,6 +73,49 @@ const byte OutputWeights[HiddenNodes][OutputNodes] = {
   {-322.72501762},
 }; 
 
+//second
+//const byte HiddenWeights[InputNodes][HiddenNodes] = {
+//  {0.45054023, 0.46709443, 0.54022961, 0.08494568},
+//  {0.35869092, 0.00548290, 0.28349116, 0.52186595},
+//  {0.66968565, 0.95656244, 0.50374959, 0.27846445},
+//  {0.72470096, 0.17985642, 0.78567725, 0.14573126},
+//  {0.65829023, 0.13653190, 0.64989734, 0.80479562},
+//  {0.37022690, 0.28539198, 0.48724852, 0.47309973},
+//  {0.56117141, 0.23889031, 0.14419876, 0.18314490},
+//  {0.89903978, 0.55937944, 0.48312925, 0.96824949},
+//  {0.43744300, 0.50613182, 0.39911485, 0.43215434},
+//  {0.87841070, 0.42834008, 0.51788086, 0.68538560},
+//}; 
+//
+//const byte OutputWeights[HiddenNodes][OutputNodes] = {
+//  {-324.5086176},
+//  {-324.81682529},
+//  {-324.81682529},
+//  {-324.07083148},
+//};
+
+
+int apneaEvent[10] = {61.82751,
+61.87159,
+61.87002,
+61.85266,
+61.8523,
+61.85903,
+61.8512,
+61.84974,
+61.86084,
+61.87298};
+
+int nonApneaEvent[10] = {59.21053,
+58.67971,
+59.80066,
+60.25105,
+61.75299,
+62.15006,
+62.81228,
+63.63069,
+63.02986,
+62.7907};
 
 void setup(){
   Serial.begin(9600);
@@ -134,10 +177,35 @@ void loop (){
       atPeak = false;          
     }
 
-    if(index = 10){
+    if(index == 10){
       index = 0;
       InputToOutput(bpm_values);
       BTserial.write(itoa(Output[0], buffer, 10));
+    }
+
+    if(BTserial.available()){
+      // 48 is for the 1 value
+      if(BTserial.read() == 48){
+        //this is an apnea event
+        InputToOutput(apneaEvent);
+        Serial.println("apnea event");
+        Serial.println("Value: ");
+        Serial.print(Output[0], 10);
+        Output[0] = 1;
+        Serial.println("");
+        BTserial.write(itoa(Output[0], buffer, 10));
+        delay(1000);
+      }else{
+        //no apnea event
+        InputToOutput(nonApneaEvent);
+        Serial.println("non apnea event");
+        Serial.println("Value: ");
+        Serial.print(Output[0], 10);
+        Output[0] = 0;
+        Serial.println("");
+        BTserial.write(itoa(Output[0], buffer, 10));
+        delay(1000);
+      }
     }
     
 
