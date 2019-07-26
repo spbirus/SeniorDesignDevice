@@ -133,7 +133,6 @@ void loop (){
     delay(7.5);
     heartSignal2 = analogRead(0);
 
-//    Serial.println(heartSignal1);
     //once waveform is stabalized click start
     if(start == 1) 
     {  
@@ -146,8 +145,8 @@ void loop (){
     if((millis() > startTime) && ((millis() - startTime) >= 6000)) //if 6 seconds has passed
     {
       bpm = (pulseCount * 10);
-        Serial.println("BPM: ");
-        Serial.println(bpm);
+//        Serial.println("BPM: ");
+//        Serial.println(bpm);
       bpm_values[index] = bpm;
       index = index + 1;
 //      BTserial.write(itoa(bpm, buffer, 10));
@@ -188,21 +187,21 @@ void loop (){
       if(BTserial.read() == 48){
         //this is an apnea event
         InputToOutput(apneaEvent);
-        Serial.println("apnea event");
-        Serial.println("Value: ");
-        Serial.print(Output[0], 10);
+//        Serial.println("apnea event");
+//        Serial.println("Value: ");
+//        Serial.print(Output[0], 10);
         Output[0] = 1;
-        Serial.println("");
+//        Serial.println("");
         BTserial.write(itoa(Output[0], buffer, 10));
         delay(1000);
       }else{
         //no apnea event
         InputToOutput(nonApneaEvent);
-        Serial.println("non apnea event");
-        Serial.println("Value: ");
-        Serial.print(Output[0], 10);
+//        Serial.println("non apnea event");
+//        Serial.println("Value: ");
+//        Serial.print(Output[0], 10);
         Output[0] = 0;
-        Serial.println("");
+//        Serial.println("");
         BTserial.write(itoa(Output[0], buffer, 10));
         delay(1000);
       }
@@ -212,8 +211,8 @@ void loop (){
     //sending the bluetooth stuff
     //store the values in an array
 //    values[index] = real_bpm;
-//    Serial.println(real_bpm);
-//    BTserial.write(itoa(real_bpm, buffer, 10));
+//    Serial.println(heartSignal1);
+//    BTserial.write(itoa(heartSignal1, buffer, 10));
 
   
   
