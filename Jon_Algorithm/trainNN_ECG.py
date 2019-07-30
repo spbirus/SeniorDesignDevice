@@ -22,6 +22,9 @@ y = np.empty((0,1), dtype=int)
 
 for filename in os.listdir(path):
 
+    if filename == 'a05.csv':
+        continue
+
     if filename == 'a02.csv' or filename == 'a04.csv' or filename == 'a06.csv' \
         or filename == 'a08.csv' or filename == 'a10.csv' or filename == 'a12.csv' \
         or filename == 'a14.csv' or filename == 'a16.csv' or filename == 'a18.csv' \
@@ -126,7 +129,83 @@ time_spent = end_time - start_time
 print("RUNTIME: " + str(time_spent) + " seconds")
 print("If you're reading this, awesome")
 
-# print ("Weights1 ", NN.weights1)        
-# print ("Weights2 ", NN.weights2)
+print ("Weights1 ", NN.weights1)        
+print ("Weights2 ", NN.weights2)
 
-# print("DONTONIA")
+print("DONTONIA")
+
+
+
+############################################################
+
+ecgSample = np.array([[]])
+ecgAnnotation = np.array([[]])
+
+A = np.empty((0,6000), dtype=int)
+B = np.empty((0,1), dtype=int)
+
+for filename in os.listdir(path):
+
+    if filename != 'a05.csv':
+        continue
+
+    print(filename)
+
+    #0 is for no apnea, 1 is for apnea
+
+    i = 0
+    j = 0 #debugging variable
+    fullFN = path + '/' + filename
+
+    with open(fullFN , newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in spamreader:
+            if row[0] == 'hart':
+                continue
+            ecgSample = np.append(ecgSample, int(row[0]))
+            if i == 0:
+                if row[1] == 'A':
+                    ecgAnnotation = np.append(ecgAnnotation, 1)
+                else: # annotation is an N
+                    ecgAnnotation = np.append(ecgAnnotation, 0)
+            if i == 5999: #new annotation
+                i = 0
+
+                #add Samples and annotation to their npArrays,
+                A = np.vstack((A, ecgSample))
+                B = np.vstack((B, ecgAnnotation))
+
+                j+=1
+
+                #reset sample and annotation temp arrays
+                ecgSample = np.array([[]])
+                ecgAnnotation = np.array([[]])
+
+                continue
+            i += 1
+            # if j == 10: #for debugging
+            #     break
+        break #**use this break if using just a single file**
+
+NN.input = A
+NN.y = B
+wumbo2 = NN.feedforward()
+
+outFN = 'C:/Users/jtgal/OneDrive/Documents/Pitt Summer 2019/Senior Design/sampleFileOutputsCSV/testing/a05FinalTestingECG.csv'
+
+with open(outFN, 'w') as csvFile:
+    for value in wumbo2:
+        if value > 0.5: #write A
+            value_str = str(value)
+            csvFile.write(value_str + ',A\n')
+        else: #write N
+            value_str = str(value)
+            csvFile.write(value_str + ',N\n')
+csvFile.close()
+
+# for valueThing in wumbo2:
+#     if valueThing[0] > 0.01:
+#         print(valueThing[0])
+    
+
+print("DONTONIA")
